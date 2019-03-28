@@ -1,0 +1,630 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>Android View  动画框架.md</title><link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css'><style type='text/css'>html, body {overflow-x: initial !important;}.CodeMirror { height: auto; }
+.CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
+.CodeMirror-lines { padding: 4px 0px; }
+.CodeMirror pre { }
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler { background-color: white; }
+.CodeMirror-gutters { border-right: 1px solid rgb(221, 221, 221); background-color: rgb(247, 247, 247); white-space: nowrap; }
+.CodeMirror-linenumbers { }
+.CodeMirror-linenumber { padding: 0px 3px 0px 5px; text-align: right; color: rgb(153, 153, 153); }
+.CodeMirror div.CodeMirror-cursor { border-left: 1px solid black; z-index: 3; }
+.CodeMirror div.CodeMirror-secondarycursor { border-left: 1px solid silver; }
+.CodeMirror.cm-keymap-fat-cursor div.CodeMirror-cursor { width: auto; border: 0px; background: rgb(119, 238, 119); z-index: 1; }
+.CodeMirror div.CodeMirror-cursor.CodeMirror-overwrite { }
+.cm-tab { display: inline-block; }
+.cm-s-typora-default .cm-header, .cm-s-typora-default .cm-property { color: rgb(217, 79, 138); }
+.cm-s-typora-default pre.cm-header1:not(.cm-atom) :not(.cm-overlay) { font-size: 2rem; line-height: 2rem; }
+.cm-s-typora-default pre.cm-header2:not(.cm-atom) :not(.cm-overlay) { font-size: 1.4rem; line-height: 1.4rem; }
+.cm-s-typora-default .cm-atom, .cm-s-typora-default .cm-number { color: rgb(149, 132, 134); }
+.cm-s-typora-default .cm-table-row, .cm-s-typora-default .cm-block-start { font-family: monospace; }
+.cm-s-typora-default .cm-comment, .cm-s-typora-default .cm-code { color: rgb(74, 90, 159); font-family: monospace; }
+.cm-s-typora-default .cm-tag { color: rgb(169, 68, 66); }
+.cm-s-typora-default .cm-string { color: rgb(126, 134, 169); }
+.cm-s-typora-default .cm-link { color: rgb(196, 122, 15); text-decoration: underline; }
+.cm-s-typora-default .cm-variable-2, .cm-s-typora-default .cm-variable-1 { color: inherit; }
+.cm-s-typora-default .cm-overlay { font-size: 1rem; font-family: monospace; }
+.CodeMirror.cm-s-typora-default div.CodeMirror-cursor { border-left: 3px solid rgb(228, 98, 154); }
+.cm-s-typora-default .CodeMirror-activeline-background { left: -60px; right: -30px; background: rgba(204, 204, 204, 0.2); }
+.cm-s-typora-default .CodeMirror-gutters { border-right: none; background-color: inherit; }
+.cm-s-typora-default .cm-trailing-space-new-line::after, .cm-startspace::after, .cm-starttab .cm-tab::after { content: "•"; position: absolute; left: 0px; opacity: 0; font-family: LetterGothicStd, monospace; }
+.os-windows .cm-startspace::after, .os-windows .cm-starttab .cm-tab::after { left: -0.1em; }
+.cm-starttab .cm-tab::after { content: " "; }
+.cm-startspace, .cm-tab, .cm-starttab, .cm-trailing-space-a, .cm-trailing-space-b, .cm-trailing-space-new-line { font-family: monospace; position: relative; }
+.cm-s-typora-default .cm-trailing-space-new-line::after { content: "↓"; opacity: 0.3; }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: black; }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-property { color: black; }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: blue; }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-negative { color: rgb(221, 68, 68); }
+.cm-positive { color: rgb(34, 153, 34); }
+.cm-header, .cm-strong { font-weight: bold; }
+.cm-del { text-decoration: line-through; }
+.cm-em { font-style: italic; }
+.cm-link { text-decoration: underline; }
+.cm-error { color: rgb(255, 0, 0); }
+.cm-invalidchar { color: rgb(255, 0, 0); }
+.cm-constant { color: rgb(38, 139, 210); }
+.cm-defined { color: rgb(181, 137, 0); }
+div.CodeMirror span.CodeMirror-matchingbracket { color: rgb(0, 255, 0); }
+div.CodeMirror span.CodeMirror-nonmatchingbracket { color: rgb(255, 34, 34); }
+.cm-s-inner .CodeMirror-activeline-background { background: inherit; }
+.CodeMirror { position: relative; overflow: hidden; }
+.CodeMirror-scroll { margin-bottom: -30px; margin-right: -30px; padding-bottom: 30px; padding-right: 30px; height: 100%; outline: none; position: relative; box-sizing: content-box; }
+.CodeMirror-sizer { position: relative; }
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler { position: absolute; z-index: 6; display: none; }
+.CodeMirror-vscrollbar { right: 0px; top: 0px; overflow-x: hidden; overflow-y: scroll; }
+.CodeMirror-hscrollbar { bottom: 0px; left: 0px; overflow-y: hidden; overflow-x: scroll; }
+.CodeMirror-scrollbar-filler { right: 0px; bottom: 0px; }
+.CodeMirror-gutter-filler { left: 0px; bottom: 0px; }
+.CodeMirror-gutters { position: absolute; left: 0px; top: 0px; padding-bottom: 30px; z-index: 3; }
+.CodeMirror-gutter { white-space: normal; height: 100%; box-sizing: content-box; padding-bottom: 30px; margin-bottom: -32px; display: inline-block; }
+.CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
+.CodeMirror-lines { cursor: text; }
+.CodeMirror pre { border-radius: 0px; border-width: 0px; background: transparent; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; word-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; }
+.CodeMirror-wrap pre { word-wrap: break-word; white-space: pre-wrap; word-break: normal; }
+.CodeMirror-code pre { border-right: 30px solid transparent; width: fit-content; }
+.CodeMirror-wrap .CodeMirror-code pre { border-right: none; width: auto; }
+.CodeMirror-linebackground { position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 0; }
+.CodeMirror-linewidget { position: relative; z-index: 2; overflow: auto; }
+.CodeMirror-widget { }
+.CodeMirror-wrap .CodeMirror-scroll { overflow-x: hidden; }
+.CodeMirror-measure { position: absolute; width: 100%; height: 0px; overflow: hidden; visibility: hidden; }
+.CodeMirror-measure pre { position: static; }
+.CodeMirror div.CodeMirror-cursor { position: absolute; visibility: hidden; border-right: none; width: 0px; }
+.CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+.CodeMirror-focused div.CodeMirror-cursor { visibility: inherit; }
+.CodeMirror-selected { background: rgb(217, 217, 217); }
+.CodeMirror-focused .CodeMirror-selected { background: rgb(215, 212, 240); }
+.cm-searching { background: rgba(255, 255, 0, 0.4); }
+.CodeMirror span { }
+@media print {
+  .CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+}
+.CodeMirror-lint-markers { width: 16px; }
+.CodeMirror-lint-tooltip { background-color: infobackground; border: 1px solid black; border-radius: 4px; color: infotext; font-family: monospace; overflow: hidden; padding: 2px 5px; position: fixed; white-space: pre-wrap; z-index: 10000; max-width: 600px; opacity: 0; transition: opacity 0.4s; font-size: 0.8em; }
+.CodeMirror-lint-mark-error, .CodeMirror-lint-mark-warning { background-position: left bottom; background-repeat: repeat-x; }
+.CodeMirror-lint-mark-error { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJDw4cOCW1/KIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAHElEQVQI12NggIL/DAz/GdA5/xkY/qPKMDAwAADLZwf5rvm+LQAAAABJRU5ErkJggg=="); }
+.CodeMirror-lint-marker-error, .CodeMirror-lint-marker-warning { background-position: center center; background-repeat: no-repeat; cursor: pointer; display: inline-block; height: 16px; width: 16px; vertical-align: middle; position: relative; }
+.CodeMirror-lint-message-error, .CodeMirror-lint-message-warning { padding-left: 18px; background-position: left top; background-repeat: no-repeat; }
+.CodeMirror-lint-marker-error, .CodeMirror-lint-message-error { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAHlBMVEW7AAC7AACxAAC7AAC7AAAAAAC4AAC5AAD///+7AAAUdclpAAAABnRSTlMXnORSiwCK0ZKSAAAATUlEQVR42mWPOQ7AQAgDuQLx/z8csYRmPRIFIwRGnosRrpamvkKi0FTIiMASR3hhKW+hAN6/tIWhu9PDWiTGNEkTtIOucA5Oyr9ckPgAWm0GPBog6v4AAAAASUVORK5CYII="); }
+.CodeMirror-lint-marker-warning, .CodeMirror-lint-message-warning { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAANlBMVEX/uwDvrwD/uwD/uwD/uwD/uwD/uwD/uwD/uwD6twD/uwAAAADurwD2tQD7uAD+ugAAAAD/uwDhmeTRAAAADHRSTlMJ8mN1EYcbmiixgACm7WbuAAAAVklEQVR42n3PUQqAIBBFUU1LLc3u/jdbOJoW1P08DA9Gba8+YWJ6gNJoNYIBzAA2chBth5kLmG9YUoG0NHAUwFXwO9LuBQL1giCQb8gC9Oro2vp5rncCIY8L8uEx5ZkAAAAASUVORK5CYII="); }
+.CodeMirror-lint-marker-multiple { background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAMAAADzjKfhAAAACVBMVEUAAAAAAAC/v7914kyHAAAAAXRSTlMAQObYZgAAACNJREFUeNo1ioEJAAAIwmz/H90iFFSGJgFMe3gaLZ0od+9/AQZ0ADosbYraAAAAAElFTkSuQmCC"); background-repeat: no-repeat; background-position: right bottom; width: 100%; height: 100%; }
+
+
+html { font-size: 14px; background-color: rgb(255, 255, 255); color: rgb(51, 51, 51); }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { background: rgb(181, 214, 252); text-shadow: none; }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; word-wrap: break-word; position: relative; padding-bottom: 70px; white-space: pre-wrap; overflow-x: auto; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+.typora-export #write { margin: 0px auto; }
+#write > p:first-child, #write > ul:first-child, #write > ol:first-child, #write > pre:first-child, #write > blockquote:first-child, #write > div:first-child, #write > table:first-child { margin-top: 30px; }
+#write li > table:first-child { margin-top: -20px; }
+img { max-width: 100%; vertical-align: middle; }
+input, button, select, textarea { color: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+::before, ::after, * { box-sizing: border-box; }
+#write p, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write div, #write pre { width: inherit; }
+#write p, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6 { position: relative; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+p { -webkit-margin-before: 1rem; -webkit-margin-after: 1rem; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
+.mathjax-block { margin-top: 0px; margin-bottom: 0px; -webkit-margin-before: 0rem; -webkit-margin-after: 0rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: bold; font-style: italic; }
+a { cursor: pointer; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; margin: 4px 0px 0px; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 80px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+pre { white-space: pre-wrap; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-diagram-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+.md-fences .CodeMirror.CodeMirror-wrap { top: -1.6em; margin-bottom: -1.6em; }
+.md-fences.mock-cm { white-space: pre-wrap; }
+.show-fences-line-number .md-fences { padding-left: 0px; }
+.show-fences-line-number .md-fences.mock-cm { padding-left: 40px; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; padding-top: 1em; padding-bottom: 1em; }
+.footnotes + .footnotes { margin-top: -1em; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: transparent; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: normal; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li p, li .mathjax-block { margin: 0.5rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; }
+@media print {
+  html, body { height: 100%; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  h1, h2, h3, h4, h5, h6 { break-after: avoid-page; orphans: 2; }
+  p { orphans: 4; }
+  html.blink-to-pdf { font-size: 13px; }
+  .typora-export #write { padding-left: 1cm; padding-right: 1cm; }
+  .typora-export #write::after { height: 0px; }
+  @page { margin: 20mm 0mm; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 2.86rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p .md-image:only-child { display: inline-block; width: 100%; text-align: center; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.mathjax-block { white-space: pre; overflow: hidden; width: 100%; }
+p + .mathjax-block { margin-top: -1.143rem; }
+.mathjax-block:not(:empty)::after { display: none; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus { outline: none; box-shadow: none; }
+.task-list { list-style-type: none; }
+.task-list-item { position: relative; padding-left: 1em; }
+.task-list-item input { position: absolute; top: 0px; left: 0px; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc::after, .md-toc-content::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); text-decoration: none; }
+.md-toc-inner:hover { }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: bold; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+.md-tag { opacity: 0.5; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: monospace; }
+code { text-align: left; }
+h1 .md-tag, h2 .md-tag, h3 .md-tag, h4 .md-tag, h5 .md-tag, h6 .md-tag { font-weight: initial; opacity: 0.35; }
+a.md-print-anchor { border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: none !important; background: transparent !important; text-decoration: initial !important; text-shadow: initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.mathjax-block .MathJax_SVG_Display { text-align: center; margin: 1em 0em; position: relative; text-indent: 0px; max-width: none; max-height: none; min-height: 0px; min-width: 100%; width: auto; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: monospace; }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: normal; line-height: normal; zoom: 90%; text-indent: 0px; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0px; min-height: 0px; border: 0px; padding: 0px; margin: 0px; }
+.MathJax_SVG * { transition: none; }
+
+
+@include-when-export url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+/**
+ * css forked from https://github.com/GitbookIO/gitbook 
+ * www.gitbook.com
+ * Apache License
+ * https://github.com/GitbookIO/gitbook/blob/master/LICENSE
+ **/
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Open Sans Regular'),url('file:///C:%5CUsers%5CAdministrator%5CAppData%5CRoaming%5CTypora%5Cthemes%5Cgithub%5C400.woff') format('woff')
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: italic;
+    font-weight: normal;
+    src: local('Open Sans Italic'),url('file:///C:%5CUsers%5CAdministrator%5CAppData%5CRoaming%5CTypora%5Cthemes%5Cgithub%5C400i.woff') format('woff')
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: bold;
+    src: local('Open Sans Bold'),url('file:///C:%5CUsers%5CAdministrator%5CAppData%5CRoaming%5CTypora%5Cthemes%5Cgithub%5C700.woff') format('woff')
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: italic;
+    font-weight: bold;
+    src: local('Open Sans Bold Italic'),url('file:///C:%5CUsers%5CAdministrator%5CAppData%5CRoaming%5CTypora%5Cthemes%5Cgithub%5C700i.woff') format('woff')
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write{
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 20px 30px 40px 30px;
+	padding-top: 20px;
+    padding-bottom: 100px;
+}
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+body > *:first-child {
+    margin-top: 0 !important;
+}
+body > *:last-child {
+    margin-bottom: 0 !important;
+}
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    /*background: url("file:///C:%5CUsers%5CAdministrator%5CAppData%5CRoaming%5Cimages%5Cmodules%5Cstyleguide%5Cpara.png") no-repeat 10px center;*/
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    padding-bottom: .3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+   padding-bottom: .3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 4px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+    border-bottom: 1px solid #ddd;
+}
+
+body > h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+body > h1:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0;
+}
+body > h3:first-child,
+body > h4:first-child,
+body > h5:first-child,
+body > h6:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+a:first-child h1,
+a:first-child h2,
+a:first-child h3,
+a:first-child h4,
+a:first-child h5,
+a:first-child h6 {
+    margin-top: 0;
+    padding-top: 0;
+}
+h1 p,
+h2 p,
+h3 p,
+h4 p,
+h5 p,
+h6 p {
+    margin-top: 0;
+}
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dddddd;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n) {
+    background-color: #f8f8f8;
+}
+table tr th {
+    font-weight: bold;
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr td {
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr th:first-child,
+table tr td:first-child {
+    margin-top: 0;
+}
+table tr th:last-child,
+table tr td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-gutters {
+    border-right: 1px solid #ddd;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding: 0.2em 1em;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+.task-list{
+	padding-left: 0;
+}
+
+.task-list-item {
+	padding-left:32px;
+}
+
+.task-list-item input {
+  top: 3px;
+  left: 8px;
+}
+
+@media screen and (min-width: 914px) {
+    /*body {
+        width: 854px;
+        margin: 0 auto;
+    }*/
+}
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag{
+	color: inherit;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#md-notification:before {
+    top: 10px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+
+</style>
+</head>
+<body class='typora-export' >
+<div  id='write'  class = 'is-node'><h1><a name='header-c5' class='md-header-anchor '></a>Android View  动画框架</h1><h2><a name='header-c7' class='md-header-anchor '></a>视图动画</h2><ul><li><p>透明度动画</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure">AخA</div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">AlphaAnimation</span> <span class="cm-variable">aa</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">AlphaAnimation</span>(<span class="cm-number">0</span>,<span class="cm-number">1</span>);</span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">aa</span>.<span class="cm-variable">setDuration</span>(<span class="cm-number">1000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">view</span>.<span class="cm-variable">starttAnimation</span>(<span class="cm-variable">aa</span>);</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 78px;"></div></div></div></pre></li><li><p>旋转动画</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">/**</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">* @param  ①旋转的初始角度  ②旋转的终止角度  ③ ④  旋转中心的横纵坐标,也可以用自身当作参考系</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">*/</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">RotateAnimation</span> <span class="cm-variable">ra</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">RotateAnimation</span>(<span class="cm-number">0</span>,<span class="cm-number">360</span>,<span class="cm-number">100</span>,<span class="cm-number">100</span>)</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">ra</span>.<span class="cm-variable">setDuration</span>(<span class="cm-number">1000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">view</span>.<span class="cm-variable">startAnimation</span>(<span class="cm-variable">ra</span>);</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 182px;"></div></div></div></pre></li><li><p>位移动画</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">/**</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">*@param &nbsp; 始末位置的横纵坐标</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">*/</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">TranslateAnimation</span> <span class="cm-variable">ta</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">TranslateAnimation</span>(<span class="cm-number">0</span>,<span class="cm-number">200</span>,<span class="cm-number">0</span>,<span class="cm-number">300</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">ta</span>.<span class="cm-variable">setDuration</span>(<span class="cm-number">1000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">view</span>.<span class="cm-variable">startAnimation</span>(<span class="cm-variable">ta</span>);</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 156px;"></div></div></div></pre></li><li><p>缩放动画</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">/*</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">* @param &nbsp; 缩放的中心点</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">*/</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">ScaleAnimation</span> <span class="cm-variable">sa</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">ScaleAnimation</span>(<span class="cm-number">0</span>,<span class="cm-number">2</span>,<span class="cm-number">0</span>,<span class="cm-number">2</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">sa</span>.<span class="cm-variable">setDuratuon</span>(<span class="cm-number">1000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">view</span>.<span class="cm-variable">startAnimation</span>(<span class="cm-variable">sa</span>);</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 156px;"></div></div></div></pre></li><li><p>动画集合</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">AnimationSet</span> <span class="cm-variable">as</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">AnimationSet</span>(<span class="cm-atom">true</span>);</span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">as</span>.<span class="cm-variable">addAnimation</span>(<span class="cm-variable">animation1</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">as</span>.<span class="cm-variable">addAnimation</span>(<span class="cm-variable">animation2</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;">.....</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">view</span>.<span class="cm-variable">startAnimation</span>(<span class="cm-variable">as</span>)</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 130px;"></div></div></div></pre></li></ul><h2><a name='header-c29' class='md-header-anchor '></a>属性动画</h2><h3><a name='header-c30' class='md-header-anchor '></a>1. ObjectAnimator</h3><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">/*</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">* @param <span class="cm-tab">   </span>①操作的View &nbsp; ②要操纵的属性<span class="cm-tab">  </span>③设置属性的变化值 </span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">*/</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">ObjectAnimator</span> <span class="cm-variable">animator</span> <span class="cm-operator">=</span> <span class="cm-variable">ObjectAnimator</span>.<span class="cm-variable">ofFloat</span>(<span class="cm-variable">view</span>,<span class="cm-string">"translateX"</span>,<span class="cm-number">300</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">animator</span>.<span class="cm-variable">setDuration</span>(<span class="cm-number">1000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">animator</span>.<span class="cm-variable">start</span>();</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 156px;"></div></div></div></pre><ul><li><p><strong>要操纵的属性必须具有get、set方法，不然ObjectAnimator就无法起效</strong>	</p><ul><li><p>translationX		translationY</p><ul><li>rotationrotationX		rotationY</li></ul></li><li><p>scaleX     scaleY</p></li><li><p>x和y</p></li><li><p>alpha</p></li></ul></li></ul><h3><a name='header-c53' class='md-header-anchor '></a>2. PropertyValyesHolder</h3><p>类似于视图动画中的AniamtionSet</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"> <span class="cm-variable">PropertyValuesHolder</span> <span class="cm-variable">translationY</span> <span class="cm-operator">=</span> <span class="cm-variable">PropertyValuesHolder</span>.<span class="cm-variable">ofFloat</span>(<span class="cm-string">"translationY"</span>, <span class="cm-number">100f</span>);</span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">PropertyValuesHolder</span> <span class="cm-variable">scaleX</span> <span class="cm-operator">=</span> <span class="cm-variable">PropertyValuesHolder</span>.<span class="cm-variable">ofFloat</span>(<span class="cm-string">"ScaleX"</span>, <span class="cm-number">1f</span>, <span class="cm-number">0</span>, <span class="cm-number">1f</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">PropertyValuesHolder</span> <span class="cm-variable">sacleY</span> <span class="cm-operator">=</span> <span class="cm-variable">PropertyValuesHolder</span>.<span class="cm-variable">ofFloat</span>(<span class="cm-string">"ScaleY"</span>, <span class="cm-number">1f</span>, <span class="cm-number">0</span>, <span class="cm-number">1f</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">ObjectAnimator</span>.<span class="cm-variable">ofPropertyValuesHolder</span>(<span class="cm-variable">mImage</span>,<span class="cm-variable">translationY</span>,<span class="cm-variable">scaleX</span>,<span class="cm-variable">sacleY</span>).<span class="cm-variable">setDuration</span>(<span class="cm-number">1000</span>).<span class="cm-variable">start</span>();</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 234px;"></div></div></div></pre><h3><a name='header-c57' class='md-header-anchor '></a>3.ValueAnimator</h3><p>本身不提供任何动画效果，可以在AnimatorUpdateListener中监听数值的变换</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap   " lang="java"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code "><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">ValueAnimator</span> <span class="cm-variable">valueAnimator</span> <span class="cm-operator">=</span> <span class="cm-variable">ValueAnimator</span>.<span class="cm-variable">ofInt</span>(<span class="cm-variable">start</span>, <span class="cm-variable">end</span>);</span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">valueAnimator</span>.<span class="cm-variable">addUpdateListener</span>(<span class="cm-keyword">new</span> <span class="cm-variable">ValueAnimator</span>.<span class="cm-variable">AnimatorUpdateListener</span>() {</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-meta">@Override</span></span></pre><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">public</span> <span class="cm-variable-3">void</span> <span class="cm-variable">onAnimationUpdate</span>(<span class="cm-variable">ValueAnimator</span> <span class="cm-variable">animation</span>) {</span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-variable-3">int</span> <span class="cm-variable">animatedValue</span> <span class="cm-operator">=</span> (<span class="cm-variable-3">int</span>) <span class="cm-variable">animation</span>.<span class="cm-variable">getAnimatedValue</span>();</span></pre><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  }</span></pre><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  });</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 260px;"></div></div></div></pre><h3><a name='header-c60' class='md-header-anchor '></a>4.AnimatorSet</h3><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">ObjectAnimator</span> <span class="cm-variable">translationX</span> <span class="cm-operator">=</span> <span class="cm-variable">ObjectAnimator</span>.<span class="cm-variable">ofFloat</span>(<span class="cm-variable">mImage</span>, <span class="cm-string">"translationX"</span>, <span class="cm-number">300f</span>);</span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">ObjectAnimator</span> <span class="cm-variable">scaleX</span> <span class="cm-operator">=</span> <span class="cm-variable">ObjectAnimator</span>.<span class="cm-variable">ofFloat</span>(<span class="cm-variable">mImage</span>, <span class="cm-string">"ScaleX"</span>, <span class="cm-number">1f</span>, <span class="cm-number">0</span>, <span class="cm-number">1f</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">ObjectAnimator</span> <span class="cm-variable">scaleY</span> <span class="cm-operator">=</span> <span class="cm-variable">ObjectAnimator</span>.<span class="cm-variable">ofFloat</span>(<span class="cm-variable">mImage</span>, <span class="cm-string">"ScaleY"</span>, <span class="cm-number">1f</span>, <span class="cm-number">0</span>, <span class="cm-number">1f</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">AnimatorSet</span> <span class="cm-variable">animatorSet</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">AnimatorSet</span>();</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">animatorSet</span>.<span class="cm-variable">setDuration</span>(<span class="cm-number">1000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">animatorSet</span>.<span class="cm-variable">playTogether</span>(<span class="cm-variable">translationX</span>,<span class="cm-variable">scaleX</span>,<span class="cm-variable">scaleY</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">animatorSet</span>.<span class="cm-variable">start</span>();</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 260px;"></div></div></div></pre><h3><a name='header-c62' class='md-header-anchor '></a>5.在XML中使用动画</h3><pre class="md-fences md-end-block" lang="xml"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">objectAnimator</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:duration</span>=<span class="cm-string">"1000"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:propertyName</span>=<span class="cm-string">"scaleX"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:valueFrom</span>=<span class="cm-string">"1.0"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:valueTo</span>=<span class="cm-string">"2.0"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:valueType</span>=<span class="cm-string">"floatType"</span><span class="cm-tag cm-bracket">/&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> </span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 182px;"></div></div></div></pre><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">Animator</span> <span class="cm-variable">animator</span> <span class="cm-operator">=</span> <span class="cm-variable">AnimatorInflater</span>.<span class="cm-variable">loadAnimator</span>(<span class="cm-keyword">this</span>, <span class="cm-variable">R</span>.<span class="cm-variable">animator</span>.<span class="cm-variable">scale_animator</span>);</span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">animator</span>.<span class="cm-variable">setTarget</span>(<span class="cm-variable">mImage</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">animator</span>.<span class="cm-variable">start</span>();</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 104px;"></div></div></div></pre><h3><a name='header-c65' class='md-header-anchor '></a>6.View的animate方法</h3><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><span><span>​</span>x</span></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">mImage</span>.<span class="cm-variable">animate</span>()</span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  .<span class="cm-variable">alpha</span>(<span class="cm-number">1</span>) &nbsp;  <span class="cm-comment">//设置透明度</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  .<span class="cm-variable">y</span>(<span class="cm-number">300</span>) &nbsp; &nbsp;  <span class="cm-comment">//设置 坐标</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  .<span class="cm-variable">setDuration</span>(<span class="cm-number">1000</span>) &nbsp; <span class="cm-comment">//设置动画时长</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  .<span class="cm-variable">withStartAction</span>(<span class="cm-keyword">new</span> <span class="cm-variable">Runnable</span>() {</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-meta">@Override</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">public</span> <span class="cm-variable-3">void</span> <span class="cm-variable">run</span>() {</span></pre><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  }</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  })</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  .<span class="cm-variable">withEndAction</span>(<span class="cm-keyword">new</span> <span class="cm-variable">Runnable</span>() {</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-meta">@Override</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">public</span> <span class="cm-variable-3">void</span> <span class="cm-variable">run</span>() {</span></pre><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  }</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  })</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  .<span class="cm-variable">start</span>();</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 442px;"></div></div></div></pre><h2><a name='header-c67' class='md-header-anchor '></a>布局动画</h2><p>所谓的布局动画是指在ViewGroup上，给ViewGroup增加View时添加一个动画过渡效果</p><p><code>Android：animateLayoutChanges = &quot;true&quot;</code></p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">mViewGroup</span> <span class="cm-operator">=</span> (<span class="cm-variable">LinearLayout</span>) <span class="cm-variable">findViewById</span>(<span class="cm-variable">R</span>.<span class="cm-variable">id</span>.<span class="cm-variable">imagegroup</span>);</span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//设置过渡动画</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">ScaleAnimation</span> <span class="cm-variable">scaleAnimation</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">ScaleAnimation</span>(<span class="cm-number">0</span>, <span class="cm-number">1</span>, <span class="cm-number">0</span>, <span class="cm-number">1</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">scaleAnimation</span>.<span class="cm-variable">setDuration</span>(<span class="cm-number">2000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//设置布局动画的显示属性</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">LayoutAnimationController</span> <span class="cm-variable">lac</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">LayoutAnimationController</span>(<span class="cm-variable">scaleAnimation</span>, <span class="cm-number">0.5f</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">lac</span>.<span class="cm-variable">setOrder</span>(<span class="cm-variable">LayoutAnimationController</span>.<span class="cm-variable">ORDER_NORMAL</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//给ViewGroup设置布局动画</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">mViewGroup</span>.<span class="cm-variable">setLayoutAnimation</span>(<span class="cm-variable">lac</span>);</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 260px;"></div></div></div></pre><ul><li><code>LayoutAnimationController.ORDER_NORMAL</code>——顺序</li><li><code>LayoutAnimationController.ORDER_RANDOM</code> ——随机</li><li><code>LayoutAnimationController.ORDER_REVERSE</code>——反序</li></ul><h2><a name='header-c83' class='md-header-anchor '></a>Interpolators(插值器)</h2><p>定义动画的变换速率，类似于物理中的加速度</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap " lang="java"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/accelerate_interpolator"</span> <span class="cm-variable">设置动画为加速动画</span>(<span class="cm-variable">动画播放中越来越快</span>)  </span></pre></div><pre class=""><span style="padding-right: 0.1px;">  </span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/decelerate_interpolator"</span> <span class="cm-variable">设置动画为减速动画</span>(<span class="cm-variable">动画播放中越来越慢</span>)  </span></pre><pre class=""><span style="padding-right: 0.1px;">  </span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/accelerate_decelerate_interpolator"</span> <span class="cm-variable">设置动画为先加速在减速</span>(<span class="cm-variable">开始速度最快</span> <span class="cm-variable">逐渐减慢</span>)  </span></pre><pre class=""><span style="padding-right: 0.1px;">  </span></pre><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/anticipate_interpolator"</span> <span class="cm-variable">先反向执行一段，然后再加速反向回来（相当于我们弹簧，先反向压缩一小段，然后在加速弹出）</span>  </span></pre></div><pre class=""><span style="padding-right: 0.1px;">  </span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/anticipate_overshoot_interpolator"</span> <span class="cm-variable">同上先反向一段，然后加速反向回来，执行完毕自带回弹效果（更形象的弹簧效果）</span>  </span></pre><pre class=""><span style="padding-right: 0.1px;">  </span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/bounce_interpolator"</span> <span class="cm-variable">执行完毕之后会回弹跳跃几段（相当于我们高空掉下一颗皮球，到地面是会跳动几下）</span>  </span></pre><pre class=""><span style="padding-right: 0.1px;">  </span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/cycle_interpolator"</span> <span class="cm-variable">循环，动画循环一定次数，值的改变为一正弦函数：Math</span>.<span class="cm-variable">sin</span>(<span class="cm-number">2</span><span class="cm-operator">*</span> <span class="cm-variable">mCycles</span><span class="cm-operator">*</span> <span class="cm-variable">Math</span>.<span class="cm-variable">PI</span><span class="cm-operator">*</span> <span class="cm-variable">input</span>)  </span></pre><pre class=""><span style="padding-right: 0.1px;">  </span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/linear_interpolator"</span> <span class="cm-variable">线性均匀改变</span>  </span></pre><pre class=""><span style="padding-right: 0.1px;">  </span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">android</span>:<span class="cm-variable">interpolator</span><span class="cm-operator">=</span><span class="cm-string">"@android:anim/overshoot_interpolator"</span> <span class="cm-variable">加速执行，结束之后回弹</span> </span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 650px;"></div></div></div></pre><h2><a name='header-c86' class='md-header-anchor '></a>自定义动画</h2><p>继承Animation  重写initialize ()  以及  applyTransformation()方法</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"> <span class="cm-meta">@Override</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-keyword">public</span> <span class="cm-variable-3">void</span> <span class="cm-def">initialize</span>(<span class="cm-variable-3">int</span> <span class="cm-variable">width</span>, <span class="cm-variable-3">int</span> <span class="cm-variable">height</span>, <span class="cm-variable-3">int</span> <span class="cm-variable">parentWidth</span>, <span class="cm-variable-3">int</span> <span class="cm-variable">parentHeight</span>) {</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">super</span>.<span class="cm-variable">initialize</span>(<span class="cm-variable">width</span>, <span class="cm-variable">height</span>, <span class="cm-variable">parentWidth</span>, <span class="cm-variable">parentHeight</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//设置默认时长</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">setDuration</span>(<span class="cm-number">5000</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//动画结束后保留状态</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">setFillAfter</span>(<span class="cm-atom">true</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//设置默认的插值器</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">setInterpolator</span>(<span class="cm-keyword">new</span> <span class="cm-variable">BounceInterpolator</span>());</span></pre><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">this</span>.<span class="cm-variable">mCenterWidth</span> <span class="cm-operator">=</span> <span class="cm-variable">width</span><span class="cm-operator">/</span><span class="cm-number">2</span>;</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">this</span>.<span class="cm-variable">mCenterHeight</span> <span class="cm-operator">=</span> <span class="cm-variable">height</span><span class="cm-operator">/</span><span class="cm-number">2</span>;</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  }</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 364px;"></div></div></div></pre><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap "><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"> <span class="cm-meta">@Override</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-keyword">protected</span> <span class="cm-variable-3">void</span> <span class="cm-def">applyTransformation</span>(<span class="cm-keyword">float</span> <span class="cm-variable">interpolatedTime</span>, <span class="cm-variable">Transformation</span> <span class="cm-variable">t</span>) {</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">super</span>.<span class="cm-variable">applyTransformation</span>(<span class="cm-variable">interpolatedTime</span>, <span class="cm-variable">t</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-keyword">this</span>.<span class="cm-variable">mCamera</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">Camera</span>();</span></pre><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">Matrix</span> <span class="cm-variable">matrix</span> <span class="cm-operator">=</span> <span class="cm-variable">t</span>.<span class="cm-variable">getMatrix</span>();</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">mCamera</span>.<span class="cm-variable">save</span>();</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//使用Camera设置旋转的角度</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">mCamera</span>.<span class="cm-variable">rotateX</span>(<span class="cm-number">20</span><span class="cm-operator">*</span><span class="cm-variable">interpolatedTime</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//将旋转变换作用到Metrix上</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">mCamera</span>.<span class="cm-variable">getMatrix</span>(<span class="cm-variable">matrix</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">mCamera</span>.<span class="cm-variable">restore</span>();</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-comment">//通过pre 方法设置矩阵作用前的的偏移量来改变旋转中心</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">matrix</span>.<span class="cm-variable">preTranslate</span>(<span class="cm-variable">mCenterWidth</span>,<span class="cm-variable">mCenterHeight</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-variable">matrix</span>.<span class="cm-variable">postTranslate</span>(<span class="cm-operator">-</span><span class="cm-variable">mCenterWidth</span>,<span class="cm-operator">-</span><span class="cm-variable">mCenterHeight</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  }</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 468px;"></div></div></div></pre><h2><a name='header-c106' class='md-header-anchor '></a>SVG      (Scalable Vector Graphics )       5.0</h2><h3><a name='header-c112' class='md-header-anchor '></a>path</h3><p>使用<path>标签创建SVG  常用的指令</p><ul><li>L   绘制直线<br/></li><li>M  移动到某一坐标</li><li>A  绘制弧线</li></ul><pre class="md-fences md-end-block" lang="xml"> <div class="CodeMirror cm-s-inner CodeMirror-wrap    " lang="xml"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">vector</span> <span class="cm-attribute">xmlns:android</span>=<span class="cm-string">"http://schemas.android.com/apk/res/android"</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-attribute">android:height</span> = <span class="cm-string">"200dp"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-attribute">android:width</span> = <span class="cm-string">"200dp"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-attribute">android:viewportHeight</span> = <span class="cm-string">"100"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-attribute">android:viewportWidth</span> = <span class="cm-string">"100"</span><span class="cm-tag cm-bracket">&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">group</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:name</span>=<span class="cm-string">"test"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:pivotX</span>=<span class="cm-string">"36"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:pivotY</span>=<span class="cm-string">"36"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:rotation</span>=<span class="cm-string">"0"</span><span class="cm-tag cm-bracket">&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">path</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:name</span>=<span class="cm-string">"v"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:fillColor</span>=<span class="cm-string">"@color/colorAccent"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:pathData</span>=<span class="cm-string">"M 25 50 a 25,25 0 1,0 50,0 L 25 80"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:strokeColor</span>=<span class="cm-string">"@color/colorPrimary"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:strokeWidth</span>=<span class="cm-string">"2"</span></span></pre><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-tag cm-bracket">/&gt;</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">group</span><span class="cm-tag cm-bracket">&gt;</span></span></pre><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">vector</span><span class="cm-tag cm-bracket">&gt;</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 520px;"></div></div></div></pre><h3><a name='header-c166' class='md-header-anchor '></a>AnimatedVectorDrawable</h3><ol><li><p>在res的drawable文件夹下通过<animated-vector>标签来声明对AnimatedVectorDrawable的使用，并指定其作用的path或group.</p><pre class="md-fences md-end-block" lang="xml"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">animated-vector</span> <span class="cm-attribute">xmlns:android</span>=<span class="cm-string">"http://schemas.android.com/apk/res/android"</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-attribute">xmlns:tools</span>=<span class="cm-string">"http://schemas.android.com/tools"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-attribute">android:drawable</span>=<span class="cm-string">"@drawable/yuanhu"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-attribute">tools:targetApi</span>=<span class="cm-string">"lollipop"</span><span class="cm-tag cm-bracket">&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span>​</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">target</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:animation</span>=<span class="cm-string">"@anim/rotate_animator"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:name</span>=<span class="cm-string">"test"</span><span class="cm-tag cm-bracket">/&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">animated-vector</span><span class="cm-tag cm-bracket">&gt;</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 260px;"></div></div></div></pre></li><li><p>对应的vector即为静态的VectorDrawable.</p><p>注意：target 中name的属性和vector中需要作用的name属性保持一致</p></li><li><p>通过animation属性，将一个动画作用到了对应name的元素上，objectAnimator的代码如下：</p><pre class="md-fences md-end-block" lang="xml"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">set</span> <span class="cm-attribute">xmlns:android</span>=<span class="cm-string">"http://schemas.android.com/apk/res/android"</span><span class="cm-tag cm-bracket">&gt;</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp;  <span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">objectAnimator</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:duration</span>=<span class="cm-string">"4000"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:propertyName</span>=<span class="cm-string">"rotation"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:valueFrom</span>=<span class="cm-string">"0"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:valueTo</span>=<span class="cm-string">"360"</span> <span class="cm-tag cm-bracket">/&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">set</span><span class="cm-tag cm-bracket">&gt;</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 182px;"></div></div></div></pre></li><li><p>将AnimatrdVectorDrawable XML 文件设置给一个ImageView 作为背景显示</p><pre class="md-fences md-end-block" lang="xml"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">ImageView</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:id</span>=<span class="cm-string">"@+id/vectorimage"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:layout_width</span>=<span class="cm-string">"wrap_content"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:layout_height</span>=<span class="cm-string">"wrap_content"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:layout_gravity</span>=<span class="cm-string">"center_horizontal"</span></span></pre><pre class=""><span style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <span class="cm-attribute">android:src</span>=<span class="cm-string">"@drawable/animator_yuanhu"</span><span class="cm-tag cm-bracket">/&gt;</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 156px;"></div></div></div></pre></li><li><p>在代码中控制SVG动画</p><pre class="md-fences md-end-block" lang="java"> <div class="CodeMirror cm-s-inner CodeMirror-wrap  " lang="java"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">mVector</span> <span class="cm-operator">=</span> (<span class="cm-variable">ImageView</span>) <span class="cm-variable">findViewById</span>(<span class="cm-variable">R</span>.<span class="cm-variable">id</span>.<span class="cm-variable">vectorimage</span>);</span></pre></div><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;">((<span class="cm-variable">Animatable</span>) <span class="cm-variable">mVector</span>.<span class="cm-variable">getDrawable</span>()).<span class="cm-variable">start</span>();</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 52px;"></div></div></div></pre></li></ol><p></p></div>
+</body>
+</html>
